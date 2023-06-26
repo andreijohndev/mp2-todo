@@ -1,0 +1,79 @@
+services:
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    networks:
+      - public
+    volumes:
+      - ./frontend/src:/app/src/
+      - frontend-modules:/app/node_modules/
+    environment:
+       - WATCHPACK_POLLING=true
+  nginx:
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    networks:
+      - private
+      - public
+    volumes:
+      - ./backend/public/:/usr/share/nginx/api/public/
+      - ./backend/src/:/usr/share/nginx/api/src/
+      - ./logs/nginx:/var/log/nginx/
+    depends_on:
+      - frontend
+      - backend
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    networks:
+      - private
+    volumes:
+      - ./backend/public/:/usr/share/nginx/api/public/
+      - ./backend/src/:/usr/share/nginx/api/src/
+    secrets:
+      - db-password
+      - secret-key
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mariadb:10.11.3-jammy
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --password='$$(cat /run/secrets/db-password)' --silent"]
+      interval: 3s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    secrets:
+      - db-password
+    networks:
+      - private
+    volumes:
+      - db-data:/var/lib/mysql/
+      - ./db/init/:/docker-entrypoint-initdb.d/
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=tododb
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db-password
+
+networks:
+  public:
+  private:
+    driver: bridge
+
+volumes:
+  db-data:
+  frontend-modules:
+
+secrets:
+  db-password:
+    file: db/password.txt
+  secret-key:
+    file: backend/key.txt

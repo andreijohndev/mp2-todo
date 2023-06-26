@@ -7,4 +7,5 @@ This project is built with [Docker](https://www.docker.com/). To run this projec
 
 ## Usage
 ```bash
-docker compose compose -f "docker-compose.yml" up -d --build```
+docker compose compose -f "docker-compose.yml" up -d --build
+```

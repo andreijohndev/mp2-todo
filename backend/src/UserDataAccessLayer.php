@@ -15,12 +15,11 @@ class UserDataAccessLayer {
         $stmt->bind_param("ss", $user->username, $hashed_password);
 
         $result = $stmt->execute();
-        $this->conn->close();
         return $result;
     }
 
     public function GetUser(string $username) {
-        $query = "SELECT id, username, password FROM Users WHERE username = ? LIMIT 0,1";
+        $query = "SELECT * FROM Users WHERE username = ? LIMIT 0,1";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("s", $username);
         $stmt->execute();
@@ -28,16 +27,12 @@ class UserDataAccessLayer {
 
         $user = null;
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $db_username, $db_password);
+            $stmt->bind_result($id, $dbUsername, $dbPassword);
             $stmt->fetch();
 
-            $user = new UserModel();
-            $user->id = $id;
-            $user->username = $db_username;
-            $user->password = $db_password;
+            $user = new UserModel($id, $dbUsername, $dbPassword);
         }
 
-        $this->conn->close();
         return $user;
     }
 }

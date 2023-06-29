@@ -13,15 +13,16 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 //     "password": "password"
 // }
 $postData = file_get_contents("php://input");
-$userController = new UserController();
-$result = $userController->LoginUser($postData);
 
-// Response data schema
+// 200 Response data schema
 // {
-//     "status": 200,
 //     "token": "jwt_token",
 //     "message": "Output message"
 // }
-http_response_code($result["status"]);
-echo json_encode($result);
+// 401 or 400 Response data schema
+// {
+//     "message": "Error message"
+// }
+$userController = new UserController();
+$userController->LoginUser($postData);
 ?>

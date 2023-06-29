@@ -15,14 +15,11 @@ $database = new DatabaseConnector();
 //     "password": "password"
 // }
 $postData = file_get_contents("php://input");
-$userController = new UserController();
-$result = $userController->RegisterUser($postData);
 
 // Response data schema
 // {
-//     "status": 200,
 //     "message": "Output message"
 // }
-http_response_code($result["status"]);
-echo json_encode($result);
+$userController = new UserController();
+$userController->RegisterUser($postData);
 ?>

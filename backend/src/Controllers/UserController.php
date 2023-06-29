@@ -5,19 +5,24 @@ require "../vendor/autoload.php";
 use \Firebase\JWT\JWT;
 
 class UserController {
-    private $dataAccessLayer = null;
+    private $databaseConnector;
+    private $dataAccessLayer;
+
+    public function __construct() {
+        $this->databaseConnector = new DatabaseConnector();
+        $this->dataAccessLayer = new UserDataAccessLayer($this->databaseConnector->conn);
+    }
 
     public function LoginUser($json_data) {
-        $databaseConnector = new DatabaseConnector();
-        $this->dataAccessLayer = new UserDataAccessLayer($databaseConnector->conn);
         $data = json_decode($json_data);
         $user = $this->dataAccessLayer->GetUser($data->username);
 
         if (is_null($user)) {
-            return [
-                "status" => 401,
-                "message" => "Username is incorrect."
-            ];
+            http_response_code(401);
+            echo json_encode([
+                "message" => "Incorrect username."
+            ]);
+            return;
         }
 
         if (password_verify($data->password, $user->password)) {
@@ -30,41 +35,46 @@ class UserController {
                 'iat' => $issuedAt->getTimeStamp(), // Issued at
                 'nbf' => $issuedAt->getTimeStamp(), // Not before
                 'exp' => $expire, // Expiry date
-                'username' => $user->username
+                'username' => $user->username,
+                'userId' => $user->id
             ];
 
-            $jwt = JWT::encode($payload, $key, 'HS256');
-            return [
-                "status" => 200,
+            $jwt = JWT::encode($payload, $key, "HS256");
+            http_response_code(200);
+            echo json_encode([
                 "token" => $jwt,
                 "message" => "Successful login."
-            ];
+            ]);
         } else {
-            return [
-                "status" => 401,
+            http_response_code(401);
+            echo json_encode([
                 "message" => "Incorrect password."
-            ];
+            ]);
         }
     }
 
     public function RegisterUser($json_data) {
-        $databaseConnector = new DatabaseConnector();
-        $this->dataAccessLayer = new UserDataAccessLayer($databaseConnector->conn);
         $data = json_decode($json_data);
-        $user = new UserModel();
-        $user->username = $data->username;
-        $user->password = $data->password;
+        $user = new UserModel(0, $data->username, $data->password);
+
+        if (!is_null($this->dataAccessLayer->GetUser($data->username))) {
+            http_response_code(400);
+            echo json_encode([
+                "message" => "User already exists."
+            ]);
+            return;
+        }
 
         if ($this->dataAccessLayer->AddUser($user)) {
-            return [
-                "status" => 200,
+            http_response_code(201);
+            echo json_encode([
                 "message" => "User was successfully registered."
-            ];
+            ]);
         } else {
-            return [
-                "status" => 400,
+            http_response_code(400);
+            echo json_encode([
                 "message" => "Unexpected error while registering the user."
-            ];
+            ]);
         }
     }
 }

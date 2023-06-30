@@ -1,8 +1,11 @@
 <?php
-require_once "../src/Controllers/ItemController.php";
+require_once dirname(__DIR__) . "/src/Controllers/ItemController.php";
 require "../vendor/autoload.php";
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+use Sop\CryptoEncoding\PEM;
+use Sop\JWX\JWA\JWA;
+use Sop\JWX\JWK\RSA\RSAPrivateKeyJWK;
+use Sop\JWX\JWT\JWT;
+use Sop\JWX\JWT\ValidationContext;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -20,13 +23,22 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
     $arr = explode(" ", $authHeader);
 
     if (sizeof($arr) == 2) {
-        $jwt = $arr[1];
+        $jwt = new JWT($arr[1]);
         
         try {
-            $key = rtrim(file_get_contents("/run/secrets/secret-key"));
-            $decoded = JWT::decode($jwt, new Key($key, "HS256"));
+            $jwk = RSAPrivateKeyJWK::fromPEM(PEM::fromFile(dirname(__DIR__) . '/private_key.pem'));
+            $ctx = ValidationContext::fromJWK($jwk)->withPermittedAlgorithmsAdded(JWA::ALGO_RSA1_5);
+            $claims = $jwt->claims($ctx);
             $method = $_SERVER["REQUEST_METHOD"];
-            $itemController = new ItemController($decoded->userId);
+            $userId = -1;
+
+            foreach ($claims as $claim) {
+                if ($claim->name() == "userId") {
+                    $userId = $claim->value();
+                }
+            }
+            
+            $itemController = new ItemController($userId);
 
             try {
                 if ($method === "POST") {

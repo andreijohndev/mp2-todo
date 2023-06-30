@@ -16,6 +16,7 @@ $postData = file_get_contents("php://input");
 
 // 200 Response data schema
 // {
+//     "username": "Username",
 //     "token": "jwt_token",
 //     "message": "Output message"
 // }

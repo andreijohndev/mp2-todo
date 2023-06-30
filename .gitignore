@@ -22,4 +22,3 @@ yarn-error.log*
 
 logs/
 db/password.txt
-backend/key.txt

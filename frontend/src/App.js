@@ -50,22 +50,12 @@
 
 import React, { useState } from 'react';
 import './App.css';
-import ToDo from './components/ToDo';
-import LandingPage from './components/LandingPage';
-import LogInPage from './components/LogInPage';
-import SignUpPage from './components/SignUpPage';
+import LandingPage from './pages/LandingPage';
+import LogInPage from './pages/LogInPage';
+import SignUpPage from './pages/SignUpPage';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [addItem, setAddItem] = useState(false);
-  const handleSubmit = () => {
-    setAddItem(!addItem);
-  };
-  const addTask = (task) => {
-    setTasks(task);
-  };
-
   return (
     <Router>
       <div className="App">
@@ -73,12 +63,6 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LogInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/todo" element={<ToDo
-            tasks={tasks}
-            addTask={addTask}
-            addItem={addItem}
-            setAddItem={setAddItem}
-          />} />
         </Routes>
       </div>
     </Router>

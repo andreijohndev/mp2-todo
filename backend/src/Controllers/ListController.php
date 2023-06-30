@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../ListDataAccessLayer.php";
-require_once __DIR__ . "/../config/DatabaseConnector.php";
+require_once dirname(__DIR__) . "/ListDataAccessLayer.php";
+require_once dirname(__DIR__) . "/config/DatabaseConnector.php";
 
 class ListController {
     private $ownerId;

@@ -1,8 +1,8 @@
 <?php
-require_once __DIR__ . "/../ListDataAccessLayer.php";
-require_once __DIR__ . "/../ItemDataAccessLayer.php";
-require_once __DIR__ . "/../config/DatabaseConnector.php";
-require_once __DIR__ . "/../Models/TaskItemModel.php";
+require_once dirname(__DIR__) . "/ListDataAccessLayer.php";
+require_once dirname(__DIR__) . "/ItemDataAccessLayer.php";
+require_once dirname(__DIR__) . "/config/DatabaseConnector.php";
+require_once dirname(__DIR__) . "/Models/TaskItemModel.php";
 
 class ItemController {
     private $databaseConnector;
@@ -21,7 +21,7 @@ class ItemController {
         $this->AuthenticationCheck($listId);
 
         $highestRankInDb = $this->dataAccessLayer->GetHighestRank($listId, "Planning");
-        $item = new TaskItemModel(0, $task, $listId, $highestRankInDb + 1, Category::Planning);
+        $item = new TaskItemModel(0, $task, $listId, $highestRankInDb + 1, "Planning");
 
         if ($this->dataAccessLayer->AddItem($item)) {
             http_response_code(201);

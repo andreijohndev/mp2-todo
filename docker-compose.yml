@@ -37,7 +37,6 @@ services:
       - ./backend/src/:/usr/share/nginx/api/src/
     secrets:
       - db-password
-      - secret-key
     depends_on:
       db:
         condition: service_healthy
@@ -75,5 +74,3 @@ volumes:
 secrets:
   db-password:
     file: db/password.txt
-  secret-key:
-    file: backend/key.txt

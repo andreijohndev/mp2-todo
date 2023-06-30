@@ -4,36 +4,46 @@ import { Container, Form, Button, Row, Col, Card} from 'react-bootstrap';
 import axios from 'axios';
 
 function LogInPage() {
-  const [password, setPassword] = useState('');
+  const [password] = useState('');
   const [username, setUsername] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  axios.defaults.baseURL = "http://localhost:8080/api";
+  useEffect(() => {
+    const authToken = sessionStorage.getItem('authToken');
+    if (authToken) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleLogInSubmit = (event) => {
     event.preventDefault();
     
-    axios.post('/authenticate', {
-      username: username,
-      password: password
-    })
-    .then(function (response) {
-      if (rememberMe) {
-        localStorage.setItem('rememberedUser', response.data.username);
-        localStorage.setItem('authToken', response.data.token);
-      } else {
-        localStorage.removeItem('rememberedUser');
-        localStorage.removeItem('authToken');
-        sessionStorage.setItem('authToken', response.data.token);
-      }
+    if (username.trim() === '' || password.trim() === '') {
+      setErrorMessage('Username and password are required.');
+    } else {
+      setErrorMessage('');
+      axios.post('/authenticate', {
+        username: username,
+        password: password
+      })
+      .then(function (response) {
+        if (rememberMe) {
+          localStorage.setItem('rememberedUser', response.data.username);
+          localStorage.setItem('authToken', response.data.token);
+        } else {
+          localStorage.removeItem('rememberedUser');
+          localStorage.removeItem('authToken');
+          sessionStorage.setItem('authToken', response.data.token);
+        }
 
-      navigate('/app');
-    })
-    .catch(function (error) {
-      setErrorMessage('Failed to log in. Please check your credentials.');
-    });
+        navigate('/app');
+      })
+      .catch(function (error) {
+        setErrorMessage('Failed to log in. Please check your credentials.');
+      });
+    }
   };
 
   useEffect(() => {
@@ -53,14 +63,14 @@ function LogInPage() {
             <Card.Body>
               <div className="mb-3">
                 <h2 className="fw-bold mb-2 mt-3 text-uppercase text-center">My To-Do List</h2>
-                <p className="mb-5 text-center">Please enter your Username and Password!</p>
+                <p className=" mb-5 text-center">Please enter your Username and Password!</p>
                 <div className="mb-3">
-                  <Form onSubmit={handleLogInSubmit}>
+                  <Form>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                       <Form.Label className="text-center">
                         Username
                       </Form.Label>
-                      <Form.Control required type="text" placeholder="Enter username" onChange={(e) => setUsername(e.target.value)}/>
+                      <Form.Control type="email" placeholder="Enter username" />
                     </Form.Group>
 
                     <Form.Group
@@ -68,7 +78,7 @@ function LogInPage() {
                       controlId="formBasicPassword"
                     >
                       <Form.Label>Password</Form.Label>
-                      <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
+                      <Form.Control type="password" placeholder="Password" />
                     </Form.Group>
                     <Form.Group
                       className="mb-3"
@@ -85,9 +95,11 @@ function LogInPage() {
                     {errorMessage && <p className="text-danger text-center">{errorMessage}</p>}
                     <div className="button-group d-flex justify-content-center"></div>
                     <div className="d-grid">
-                      <Button variant="primary" type="submit">
-                        Login
-                      </Button>
+                      <Link to="/todo">
+                        <Button variant="primary" type="submit">
+                          Login
+                        </Button>
+                      </Link>
                     </div>
                   </Form>
                   <div className="mt-3">

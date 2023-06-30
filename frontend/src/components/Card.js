@@ -1,7 +1,7 @@
 import React from "react";
 import Draggable from "react-draggable";
 
-export default function Card({ currentTask, tasks, addTask }) {
+function Card({ currentTask, tasks, addTask }) {
   const handleDeleteTask = () => {
     const newTaskList = tasks.filter((item) => item.id !== currentTask.id);
     addTask(newTaskList);
@@ -24,3 +24,5 @@ export default function Card({ currentTask, tasks, addTask }) {
     </Draggable>
   );
 }
+
+export default Card;

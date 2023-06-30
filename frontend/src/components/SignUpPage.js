@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Form, Button } from 'react-bootstrap';
+import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
 import axios from 'axios';
 
 function SignUpPage() {
@@ -31,46 +31,66 @@ function SignUpPage() {
   };
 
   return (
-    <Container>
-      <h2>Sign Up</h2>
-      <Form onSubmit={handleSignUpFormSubmit}>
-        <Form.Group controlId="name" className="mt-3">
-          <Form.Label>Name:</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group className="mt-2" controlId="password">
-          <Form.Label>Password:</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Enter a password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group className="mt-2" controlId="confirmPassword">
-          <Form.Label>Confirm Password:</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Confirm your password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-        </Form.Group>
-        <Button type="submit" variant="primary" className="btn-block mt-4">
-          Sign Up
-        </Button>
-      </Form>
-      <div className="mt-4">
-        <p>
-          Already have an account? <Link to="/login" onClick={handleLoginClick}>Log In</Link>
-        </p>
-      </div>
-    </Container>
+    <div>
+      <Container>
+        <Row className="vh-100 d-flex justify-content-center align-items-center">
+          <Col md={8} lg={6} xs={12}>
+            <Card className="shadow px-4">
+              <Card.Body>
+                <div className="mb-3 mt-md-4">
+                  <h2 className="fw-bold mb-5 text-uppercase ">My To-Do List</h2>
+                  <div className="mb-3">
+                    <Form onSubmit={handleSignUpFormSubmit}>
+                      <Form.Group className="mb-3" controlId="Name">
+                        <Form.Label className="text-center">
+                          Name
+                        </Form.Label>
+                        <Form.Control type="text" placeholder="Enter Name" value={name}
+                           onChange={(e) => setName(e.target.value)} />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="formBasicPassword"
+                      >
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control type="password" placeholder="Password"  value={password}
+                           onChange={(e) => setPassword(e.target.value)} />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="formBasicPassword"
+                      >
+                        <Form.Label>Confirm Password</Form.Label>
+                        <Form.Control type="password" placeholder="Password"  value={confirmPassword}
+                           onChange={(e) => setConfirmPassword(e.target.value)}/>
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="formBasicCheckbox"
+                      >
+                      </Form.Group>
+                      <div className="d-grid">
+                        <Button variant="primary" type="submit">
+                          Create Account
+                        </Button>
+                      </div>
+                    </Form>
+                    <div className="mt-3">
+                      <p className="mb-0  text-center">
+                      Already have an account??{" "}
+                        <Link to="/login" onClick={handleLoginClick}>
+                          Sign in
+                        </Link>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 }
 

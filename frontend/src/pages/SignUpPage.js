@@ -92,7 +92,7 @@
 // export default SignUpPage;
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Container, Form, Button, Row, Col, Card, Alert } from 'react-bootstrap';
 import axios from 'axios';
 
@@ -101,6 +101,7 @@ function SignUpPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState(false); // Track password error
+  const navigate = useNavigate();
 
   const handleSignUpFormSubmit = (event) => {
     event.preventDefault();
@@ -110,13 +111,12 @@ function SignUpPage() {
       return;
     }
 
-    axios
-      .post('/api/register', {
+    axios.post('/api/register', {
         username: name,
         password: password
       })
       .then(function (response) {
-        console.log(response);
+        navigate('/login');
       })
       .catch(function (error) {
         console.log(error);
@@ -180,7 +180,7 @@ function SignUpPage() {
                     </Form>
                     <div className="mt-3">
                       <p className="mb-0 text-center">
-                        Already have an account??{' '}
+                        Already have an account? {' '}
                         <Link to="/login" onClick={handleLoginClick}>
                           Sign in
                         </Link>

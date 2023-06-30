@@ -19,9 +19,7 @@ class ItemController {
 
     public function CreateNewItem($listId, $task) {
         $this->AuthenticationCheck($listId);
-
-        $highestRankInDb = $this->dataAccessLayer->GetHighestRank($listId, "Planning");
-        $item = new TaskItemModel(0, $task, $listId, $highestRankInDb + 1, "Planning");
+        $item = new TaskItemModel(0, $task, $listId);
 
         if ($this->dataAccessLayer->AddItem($item)) {
             http_response_code(201);
@@ -69,39 +67,11 @@ class ItemController {
         echo json_encode($items);
     }
 
-    public function GetItemsInCategory($listId, $category) {
-        $this->AuthenticationCheck($listId);
-        $items = $this->dataAccessLayer->GetItemsInCategory($listId, $category);
-
-        if (is_null($items)) {
-            http_response_code(400);
-            echo json_encode([
-                "message" => "Items not found."
-            ]);
-            return;
-        }
-
-        http_response_code(200);
-        echo json_encode($items);
-    }
-
     public function ModifyItem($listId, $itemId, $newData) {
         $this->AuthenticationCheck($listId);
         $item = $this->dataAccessLayer->GetItem($itemId);
 
-        if (property_exists($newData, "rank") && !property_exists($newData, "task") && !property_exists($newData, "category")) {
-            if ($this->dataAccessLayer->ModifyRank($item->listId, $item->id, $item->category, $newData->rank)) {
-                http_response_code(200);
-                echo json_encode([
-                    "message" => "Successfully reordered item."
-                ]);
-            } else {
-                http_response_code(400);
-                echo json_encode([
-                    "message" => "Unexpected error while reordering item."
-                ]);
-            }
-        } elseif (property_exists($newData, "task") && !property_exists($newData, "rank") && !property_exists($newData, "category")) {
+        if (property_exists($newData, "task") && !property_exists($newData, "completion")) {
             if ($this->dataAccessLayer->ModifyTask($item->id, $newData->task)) {
                 http_response_code(200);
                 echo json_encode([
@@ -113,16 +83,16 @@ class ItemController {
                     "message" => "Unexpected error while modifying item."
                 ]);
             }
-        } elseif (property_exists($newData, "category") && !property_exists($newData, "rank") && !property_exists($newData, "task")) {
-            if ($this->dataAccessLayer->ChangeCategory($item->listId, $item->id, $newData->category)) {
+        } elseif (property_exists($newData, "completion") && !property_exists($newData, "task")) {
+            if ($this->dataAccessLayer->ModifyCompletion($item->listId, $item->id, $newData->category)) {
                 http_response_code(200);
                 echo json_encode([
-                    "message" => "Successfully changed item category."
+                    "message" => "Successfully modified item completion."
                 ]);
             } else {
                 http_response_code(400);
                 echo json_encode([
-                    "message" => "Unexpected error while changing item category."
+                    "message" => "Unexpected error while modifying item completion."
                 ]);
             }
         }

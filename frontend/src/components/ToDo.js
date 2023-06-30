@@ -4,17 +4,6 @@ import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import Card from "./Card";
 
-function Navbar() {
-  return (
-    <nav className="navbar">
-      <h3 className="text-center m-auto">My To-Do List</h3>
-      <Link to="/" className="nav-link">
-         Home
-       </Link>
-    </nav>
-  );
-}
-
 function Header({ handleSubmit }) {
   return (
     <div className="header">

@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
@@ -10,11 +8,12 @@ function SignUpPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  axios.defaults.baseURL = "http://localhost:8080/api";
+
   const handleSignUpFormSubmit = (event) => {
     event.preventDefault();
 
-    axios
-      .post('/api/register', {
+    axios.post('/api/register', {
         username: name,
         password: password
       })
@@ -45,7 +44,7 @@ function SignUpPage() {
                         <Form.Label className="text-center">
                           Name
                         </Form.Label>
-                        <Form.Control type="text" placeholder="Enter Name" value={name}
+                        <Form.Control type="text" placeholder="Enter Name" value={name} required
                            onChange={(e) => setName(e.target.value)} />
                       </Form.Group>
                       <Form.Group
@@ -53,7 +52,7 @@ function SignUpPage() {
                         controlId="formBasicPassword"
                       >
                         <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password"  value={password}
+                        <Form.Control type="password" placeholder="Password"  value={password} required
                            onChange={(e) => setPassword(e.target.value)} />
                       </Form.Group>
                       <Form.Group
@@ -61,7 +60,7 @@ function SignUpPage() {
                         controlId="formBasicPassword"
                       >
                         <Form.Label>Confirm Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password"  value={confirmPassword}
+                        <Form.Control type="password" placeholder="Password"  value={confirmPassword} required
                            onChange={(e) => setConfirmPassword(e.target.value)}/>
                       </Form.Group>
                       <Form.Group
@@ -77,7 +76,7 @@ function SignUpPage() {
                     </Form>
                     <div className="mt-3">
                       <p className="mb-0  text-center">
-                      Already have an account??{" "}
+                      Already have an account?{" "}
                         <Link to="/login" onClick={handleLoginClick}>
                           Sign in
                         </Link>

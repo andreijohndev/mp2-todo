@@ -19,28 +19,30 @@ function LogInPage() {
 
   const handleLogInSubmit = (event) => {
     event.preventDefault();
-
+    
     if (username.trim() === '' || password.trim() === '') {
       setErrorMessage('Username and password are required.');
     } else {
       setErrorMessage('');
-      axios
-        .post('/api/authenticate', {
-          username: username,
-          password: password
-        })
-        .then(function (response) {
+      axios.post('/authenticate', {
+        username: username,
+        password: password
+      })
+      .then(function (response) {
+        if (rememberMe) {
+          localStorage.setItem('rememberedUser', response.data.username);
+          localStorage.setItem('authToken', response.data.token);
+        } else {
+          localStorage.removeItem('rememberedUser');
+          localStorage.removeItem('authToken');
           sessionStorage.setItem('authToken', response.data.token);
-          if (rememberMe) {
-            localStorage.setItem('rememberedUser', username);
-          } else {
-            localStorage.removeItem('rememberedUser');
-          }
-          navigate('/dashboard');
-        })
-        .catch(function (error) {
-          setErrorMessage('Failed to log in. Please check your credentials.');
-        });
+        }
+
+        navigate('/app');
+      })
+      .catch(function (error) {
+        setErrorMessage('Failed to log in. Please check your credentials.');
+      });
     }
   };
 

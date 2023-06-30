@@ -2,14 +2,12 @@
 class TaskItemModel {
     public int $id;
     public string $task;
-    public int $listId;
-    public bool $completed;
+    public int $ownerId;
 
-    public function __construct($id, $task, $listId, $completed) {
+    public function __construct($id, $task, $ownerId) {
         $this->id = $id;
         $this->task = $task;
-        $this->listId = $listId;
-        $this->completed = $completed;
+        $this->ownerId = $ownerId;
     }
 }
 ?>

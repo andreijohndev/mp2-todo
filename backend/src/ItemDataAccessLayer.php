@@ -9,9 +9,9 @@ class ItemDataAccessLayer {
     }
 
     public function AddItem(TaskItemModel $item) {
-        $query = "INSERT INTO Items (task, list_id, rank, category) VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO Items (task, list_id) VALUES (?, ?)";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("siis", $item->task, $item->listId, $item->rank, $item->category);
+        $stmt->bind_param("siis", $item->task, $item->listId);
 
         $result = $stmt->execute();
         return $result;
@@ -26,17 +26,17 @@ class ItemDataAccessLayer {
 
         $item = null;
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($dbId, $task, $listId, $rank, $category);
+            $stmt->bind_result($dbId, $task, $listId, $completed);
             $stmt->fetch();
 
-            $item = new TaskItemModel($dbId, $task, $listId, $rank, $category);
+            $item = new TaskItemModel($dbId, $task, $listId, $completed);
         }
 
         return $item;
     }
 
     public function GetItems($listId) {
-        $query = "SELECT * FROM Items WHERE list_id = ? ORDER BY rank ASC";
+        $query = "SELECT * FROM Items WHERE list_id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("i", $listId);
         $stmt->execute();
@@ -47,67 +47,28 @@ class ItemDataAccessLayer {
         }
 
         $items = [];
-        $stmt->bind_result($id, $task, $dbListId, $rank, $category);
+        $stmt->bind_result($id, $task, $dbListId, $completed);
         while ($stmt->fetch()) {
-            $items[] = new TaskItemModel($id, $task, $dbListId, $rank, $category);
+            $items[] = new TaskItemModel($id, $task, $dbListId, $completed);
         }
 
         return $items;
-    }
-
-    public function GetItemsInCategory($listId, $category) {
-        $query = "SELECT * FROM Items WHERE list_id = ? AND category = ? ORDER BY rank ASC";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("is", $listId, $category);
-        $stmt->execute();
-        $stmt->store_result();
-
-        if ($stmt->num_rows == 0) {
-            return null;
-        }
-
-        $items = [];
-        $stmt->bind_result($id, $task, $dbListId, $rank, $dbCategory);
-        while ($stmt->fetch()) {
-            $items[] = new TaskItemModel($id, $task, $dbListId, $rank, $dbCategory);
-        }
-
-        return $items;
-    }
-
-    public function ModifyRank(int $listId, int $id, string $category, int $newRank) {
-        $rankUpdateQuery = "UPDATE Items SET `rank`=`rank`+1 WHERE list_id = ? AND category = ? AND `rank` >= ?";
-        $rankStmt = $this->conn->prepare($rankUpdateQuery);
-
-        $rankStmt->bind_param("isi", $listId, $category, $newRank);
-        $rankUpdateResult = $rankStmt->execute();
-
-        if (!$rankUpdateResult) {
-            return $rankUpdateResult;
-        }
-
-        $query = "UPDATE Items SET rank = ? WHERE item_id = ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("ii", $newRank, $id);
-
-        $result = $stmt->execute();
-        return $result;
     }
 
     public function ModifyTask(int $id, string $newTask) {
         $query = "UPDATE Items SET task = ? WHERE item_id = ?";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("si", $newTask, $id);
+        $stmt->bind_param("ii", $newTask, $id);
 
         $result = $stmt->execute();
         return $result;
     }
 
-    public function ChangeCategory(int $listId, int $id, string $newCategory) {
-        $newRank = $this->GetHighestRank($listId, $newCategory) + 1;
-        $query = "UPDATE Items SET rank = ?, category = ? WHERE item_id = ?";
+    public function ModifyCompletion(int $id, bool $completed) {
+        $query = "UPDATE Items SET completed = ? WHERE item_id = ?";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("isi", $newRank, $newCategory, $id);
+        $completedNumber = $completed ? 1 : 0;
+        $stmt->bind_param("ii", $completedNumber, $id);
 
         $result = $stmt->execute();
         return $result;
@@ -120,23 +81,6 @@ class ItemDataAccessLayer {
 
         $result = $stmt->execute();
         return $result;
-    }
-
-    public function GetHighestRank($listId, $category) {
-        $query = "SELECT MAX(rank) FROM Items WHERE list_id = ? AND category = ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("is", $listId, $category);
-        $stmt->execute();
-        $stmt->store_result();
-
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result($maxRank);
-            $stmt->fetch();
-
-            return $maxRank;
-        }
-        
-        return 0;
     }
 }
 ?>

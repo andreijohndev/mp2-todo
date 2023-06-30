@@ -49,8 +49,6 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
                 } elseif ($method === "GET") {
                     if (isset($_GET["id"])) {
                         $itemController->GetItem($_GET["id"]);
-                    } elseif (isset($_GET["category"])) {
-                        $itemController->GetItemsInCategory($_GET["list"], $_GET["category"]);
                     } else {
                         $itemController->GetItems($_GET["list"]);
                     }

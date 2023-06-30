@@ -17,8 +17,7 @@ CREATE TABLE IF NOT EXISTS `Items` (
 	`item_id` INT NOT NULL AUTO_INCREMENT,
 	`task` VARCHAR(255) NOT NULL,
 	`list_id` INT NOT NULL,
-	`rank` INT NOT NULL,
-	`category` enum('Planning', 'InProgress', 'Completed') NOT NULL,
+	`completed` BOOLEAN NOT NULL,
 	PRIMARY KEY (`item_id`),
 	FOREIGN KEY (`list_id`) REFERENCES Lists(`list_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

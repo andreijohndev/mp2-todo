@@ -9,13 +9,10 @@ function SignUpPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState(false);
 
+  axios.defaults.baseURL = "http://localhost:8080/api";
+
   const handleSignUpFormSubmit = (event) => {
     event.preventDefault();
-
-    if (password !== confirmPassword) {
-      setPasswordError(true);
-      return;
-    }
 
     axios
       .post('/api/register', {
@@ -49,30 +46,18 @@ function SignUpPage() {
                         <Form.Label className="text-center">
                           Name
                         </Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter Name"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                        />
+                        <Form.Control type="text" placeholder="Enter Name" value={name}
+                           onChange={(e) => setName(e.target.value)} />
                       </Form.Group>
                       <Form.Group className="mb-3" controlId="formBasicPassword">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control
-                          type="password"
-                          placeholder="Password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                        />
+                        <Form.Control type="password" placeholder="Password"  value={password}
+                           onChange={(e) => setPassword(e.target.value)} />
                       </Form.Group>
                       <Form.Group className="mb-3" controlId="formBasicPassword">
                         <Form.Label>Confirm Password</Form.Label>
-                        <Form.Control
-                          type="password"
-                          placeholder="Password"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                        />
+                        <Form.Control type="password" placeholder="Password"  value={confirmPassword}
+                           onChange={(e) => setConfirmPassword(e.target.value)}/>
                       </Form.Group>
                       {passwordError && (
                         <Alert variant="danger">
@@ -86,8 +71,8 @@ function SignUpPage() {
                       </div>
                     </Form>
                     <div className="mt-3">
-                      <p className="mb-0 text-center">
-                        Already have an account??{' '}
+                      <p className="mb-0  text-center">
+                      Already have an account??{" "}
                         <Link to="/login" onClick={handleLoginClick}>
                           Sign in
                         </Link>

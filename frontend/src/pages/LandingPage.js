@@ -1,19 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Button, Row, Col, Card } from 'react-bootstrap';
+import NavigationBar from '../components/NavigationBar';
 
-function Navbar() {
-  return (
-    <nav className="navbar">
-      <h3 className="text-center m-auto">Welcome to My To-Do List</h3>
-    </nav>
-  );
-}
+// function Navbar() {
+//   return (
+//     <nav className="navbar">
+//       <h3 className="text-center m-auto">Welcome to My To-Do List</h3>
+//     </nav>
+//   );
+// }
 
 function LandingPage() {
   return (
-    <Container>
-      <Navbar />
+    <Container fluid>
+      <NavigationBar />
       <Row className="justify-content-center">
         <Col lg={6}>
           <Card className="mt-4">

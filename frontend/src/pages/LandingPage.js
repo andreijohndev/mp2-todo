@@ -16,16 +16,16 @@ function LandingPage() {
     <Container fluid>
       <NavigationBar />
       <Row className="justify-content-center">
-        <Col lg={6}>
+        <Col lg={9}>
           <Card className="mt-4">
             <Card.Body>
               <div className="text-right">
                 <Button variant="primary" size="lg" as={Link} to="/signup">
                   Sign Up Now
                 </Button>
-                <Button variant="secondary" size="lg" className="me-lg-1 mx-sm-2" as={Link} to="/login">
+                {/* <Button variant="secondary" size="lg" className="me-lg-1 mx-sm-2" as={Link} to="/login">
                   Sign In
-                </Button>
+                </Button> */}
               </div>
               <p className="lead">
                 Stay organized and productive with our powerful and intuitive to-do list application. Whether you're managing

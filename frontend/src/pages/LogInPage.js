@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Container, Form, Button, Row, Col, Card} from 'react-bootstrap';
@@ -30,7 +29,7 @@ function LogInPage() {
         sessionStorage.setItem('authToken', response.data.token);
       }
 
-      //navigate('/app');
+      navigate('/app');
     })
     .catch(function (error) {
       setErrorMessage('Failed to log in. Please check your credentials.');

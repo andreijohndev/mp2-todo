@@ -9,9 +9,9 @@ class ItemDataAccessLayer {
     }
 
     public function AddItem(TaskItemModel $item) {
-        $query = "INSERT INTO Items (task, list_id) VALUES (?, ?)";
+        $query = "INSERT INTO Items (task, user_id) VALUES (?, ?)";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("siis", $item->task, $item->listId);
+        $stmt->bind_param("si", $item->task, $item->ownerId);
 
         $result = $stmt->execute();
         return $result;
@@ -26,19 +26,19 @@ class ItemDataAccessLayer {
 
         $item = null;
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($dbId, $task, $listId, $completed);
+            $stmt->bind_result($dbId, $task, $userId);
             $stmt->fetch();
 
-            $item = new TaskItemModel($dbId, $task, $listId, $completed);
+            $item = new TaskItemModel($dbId, $task, $userId);
         }
 
         return $item;
     }
 
-    public function GetItems($listId) {
-        $query = "SELECT * FROM Items WHERE list_id = ?";
+    public function GetItems($userId) {
+        $query = "SELECT * FROM Items WHERE user_id = ?";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("i", $listId);
+        $stmt->bind_param("i", $userId);
         $stmt->execute();
         $stmt->store_result();
 
@@ -47,9 +47,9 @@ class ItemDataAccessLayer {
         }
 
         $items = [];
-        $stmt->bind_result($id, $task, $dbListId, $completed);
+        $stmt->bind_result($id, $task, $dbUserId);
         while ($stmt->fetch()) {
-            $items[] = new TaskItemModel($id, $task, $dbListId, $completed);
+            $items[] = new TaskItemModel($id, $task, $dbUserId);
         }
 
         return $items;
@@ -59,16 +59,6 @@ class ItemDataAccessLayer {
         $query = "UPDATE Items SET task = ? WHERE item_id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("ii", $newTask, $id);
-
-        $result = $stmt->execute();
-        return $result;
-    }
-
-    public function ModifyCompletion(int $id, bool $completed) {
-        $query = "UPDATE Items SET completed = ? WHERE item_id = ?";
-        $stmt = $this->conn->prepare($query);
-        $completedNumber = $completed ? 1 : 0;
-        $stmt->bind_param("ii", $completedNumber, $id);
 
         $result = $stmt->execute();
         return $result;

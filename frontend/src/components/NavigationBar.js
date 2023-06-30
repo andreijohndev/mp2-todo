@@ -1,21 +1,21 @@
 import { Container, Button } from 'react-bootstrap';
 import Navbar from 'react-bootstrap/Navbar';
-import { Navigate, Link } from 'react-router-dom';
-
-const logout = () => {
-  sessionStorage.removeItem('authToken');
-  localStorage.removeItem('authToken');
-  Navigate('/');
-}
+import { useNavigate, Link } from 'react-router-dom';
 
 const NavUser = () => {
+  const navigate = useNavigate();
+
   if (localStorage.getItem("authToken") === null && sessionStorage.getItem("authToken") === null) {
     return (
       <Button variant="primary" as={Link} to="/login">Login</Button>
     );
   } else {
     return (
-      <Button variant="danger" onClick={logout()}>Logout</Button>
+      <Button variant="danger" onClick={() => {
+        sessionStorage.removeItem('authToken');
+        localStorage.removeItem('authToken');
+        navigate('/');
+      }}>Logout</Button>
     );
   }
 }

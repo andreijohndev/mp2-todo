@@ -10,6 +10,7 @@ function ListSidebar(props) {
   return (
     <Stack gap={0}>
       <Button variant="primary">Create New List</Button>
+      {renderListButtons(props.lists)}
     </Stack>
   );
 }

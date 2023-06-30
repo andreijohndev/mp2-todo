@@ -13,11 +13,6 @@ header("Access-Control-Allow-Methods: POST, GET, PATCH, DELETE");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-if (!isset($_GET["list"])) {
-    http_response_code(404);
-    die();
-}
-
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
     $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
     $arr = explode(" ", $authHeader);
@@ -45,23 +40,23 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
                     $inputData = file_get_contents("php://input");
                     $data = json_decode($inputData);
 
-                    $itemController->CreateNewItem($_GET["list"], $data->task);
+                    $itemController->CreateNewItem($data->task);
                 } elseif ($method === "GET") {
                     if (isset($_GET["id"])) {
                         $itemController->GetItem($_GET["id"]);
                     } else {
-                        $itemController->GetItems($_GET["list"]);
+                        $itemController->GetItems();
                     }
                 } elseif ($method === "PATCH") {
                     if (isset($_GET["id"])) {
                         $inputData = file_get_contents("php://input");
                         $data = json_decode($inputData);
 
-                        $itemController->ModifyItem($_GET["list"], $_GET["id"], $data);
+                        $itemController->ModifyItem($_GET["id"], $data);
                     }
                 } elseif ($method === "DELETE") {
                     if (isset($_GET["id"])) {
-                        $itemController->DeleteItem($_GET["list"], $_GET["id"]);
+                        $itemController->DeleteItem($_GET["id"]);
                     }
                 }
             } catch (Exception $e) {

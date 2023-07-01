@@ -113,7 +113,7 @@ function SignUpPage() {
       return;
     }
 
-    axios.post('/api/register', {
+    axios.post('/register', {
         username: name,
         password: password
       })

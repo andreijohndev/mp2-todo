@@ -103,6 +103,8 @@ function SignUpPage() {
   const [passwordError, setPasswordError] = useState(false); // Track password error
   const navigate = useNavigate();
 
+  axios.defaults.baseURL = "http://localhost:8080/api";
+
   const handleSignUpFormSubmit = (event) => {
     event.preventDefault();
 

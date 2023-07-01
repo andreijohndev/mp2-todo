@@ -44,6 +44,7 @@ function Dashboard() {
     // Make API call to create a new todo
     await instance.post('/items', JSON.stringify(newTodoObj))
       .then(function (response) {
+        console.log(response.data);
         // Add the new todo to the existing list
         setTodos(prevTodos => [...prevTodos, response.data]);
       }).catch(function (response) {

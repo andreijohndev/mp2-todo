@@ -19,12 +19,12 @@ class ItemController {
 
         if ($this->dataAccessLayer->AddItem($item)) {
             http_response_code(201);
-            echo json_encode([
-                "message" => "Item created."
-            ]);
+            echo json_encode($item);
          }else {
             http_response_code(400);
-            echo json_encode($item);
+            echo json_encode([
+                "message" => "Unexpected error while creating item."
+            ]);
         }
     }
 
